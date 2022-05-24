@@ -100,6 +100,16 @@ pub mod pallet {
 	}
 
 	#[cfg(feature = "std")]
+	impl<T: Config> GenesisConfig<T> {
+		/// Direct implementation of `GenesisBuild::assimilate_storage`.
+		///
+		/// Kept in order not to break dependency.
+		pub fn assimilate_storage(&self, storage: &mut sp_runtime::Storage) -> Result<(), String> {
+			<Self as GenesisBuild<T>>::assimilate_storage(self, storage)
+		}
+	}
+
+	#[cfg(feature = "std")]
 	impl<T: Config> Default for GenesisConfig<T> {
 		fn default() -> Self {
 			GenesisConfig {
@@ -108,7 +118,7 @@ pub mod pallet {
 		}
 	}
 
-    #[pallet::genesis_build]
+	#[pallet::genesis_build]
 	impl<T: Config> GenesisBuild<T> for GenesisConfig<T> {
 		fn build(&self) {
 			FeePercent::<T>::put(self.fee_percent);
