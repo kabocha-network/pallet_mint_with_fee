@@ -1,12 +1,10 @@
 use crate as pallet_mint_with_fee;
 use frame_support::{parameter_types, traits::Everything};
-// use frame_system;
 use sp_core::H256;
 use sp_runtime::{
 	testing::Header,
 	traits::{BlakeTwo256, IdentityLookup},
 };
-
 type UncheckedExtrinsic = frame_system::mocking::MockUncheckedExtrinsic<Test>;
 type Block = frame_system::mocking::MockBlock<Test>;
 
@@ -20,10 +18,9 @@ frame_support::construct_runtime!(
 		System: frame_system::{Pallet, Call, Config, Storage, Event<T>},
 		MintWithFee: pallet_mint_with_fee::{Pallet, Call, Storage, Event<T>},
 
-        Balances: pallet_balances,
+		Balances: pallet_balances
 	}
 );
-
 
 parameter_types! {
 	pub const BlockHashCount: u64 = 250;
@@ -31,30 +28,30 @@ parameter_types! {
 }
 
 impl frame_system::Config for Test {
+	type AccountData = pallet_balances::AccountData<u64>;
+	type AccountId = u64;
 	type BaseCallFilter = Everything;
-	type BlockWeights = ();
+	type BlockHashCount = BlockHashCount;
 	type BlockLength = ();
-	type DbWeight = ();
-	type Origin = Origin;
-	type Call = Call;
-	type Index = u64;
 	type BlockNumber = u64;
+	type BlockWeights = ();
+	type Call = Call;
+	type DbWeight = ();
+	type Event = Event;
 	type Hash = H256;
 	type Hashing = BlakeTwo256;
-	type AccountId = u64;
-	type Lookup = IdentityLookup<Self::AccountId>;
 	type Header = Header;
-	type Event = Event;
-	type BlockHashCount = BlockHashCount;
-	type Version = ();
-	type PalletInfo = PalletInfo;
-	type AccountData = pallet_balances::AccountData<u64>;
-	type OnNewAccount = ();
-	type OnKilledAccount = ();
-	type SystemWeightInfo = ();
-	type SS58Prefix = SS58Prefix;
-	type OnSetCode = ();
+	type Index = u64;
+	type Lookup = IdentityLookup<Self::AccountId>;
 	type MaxConsumers = frame_support::traits::ConstU32<16>;
+	type OnKilledAccount = ();
+	type OnNewAccount = ();
+	type OnSetCode = ();
+	type Origin = Origin;
+	type PalletInfo = PalletInfo;
+	type SS58Prefix = SS58Prefix;
+	type SystemWeightInfo = ();
+	type Version = ();
 }
 
 pub type Balance = u64;
@@ -66,21 +63,21 @@ parameter_types! {
 }
 
 impl pallet_balances::Config for Test {
-	type MaxLocks = MaxLocks;
-	type Balance = Balance;
-	type Event = Event;
-	type DustRemoval = ();
-	type ExistentialDeposit = ExistentialDeposit;
 	type AccountStore = System;
-	type WeightInfo = ();
+	type Balance = Balance;
+	type DustRemoval = ();
+	type Event = Event;
+	type ExistentialDeposit = ExistentialDeposit;
+	type MaxLocks = MaxLocks;
 	type MaxReserves = MaxReserves;
 	type ReserveIdentifier = [u8; 8];
+	type WeightInfo = ();
 }
 
 impl pallet_mint_with_fee::Config for Test {
+	type Currency = Balances;
 	type Event = Event;
-    type Currency = Balances;
-    type WeightInfo = pallet_mint_with_fee::weights::SubstrateWeight<Test>;
+	type WeightInfo = pallet_mint_with_fee::weights::SubstrateWeight<Test>;
 }
 
 /// Mock users AccountId
@@ -95,11 +92,7 @@ pub struct ExtBuilder {
 impl Default for ExtBuilder {
 	fn default() -> Self {
 		ExtBuilder {
-			caps_endowed_accounts: vec![
-			(ALICE, 1_000_000),
-			(BOB, 100_000),
-			(CHARLIE, 100_000),
-		],
+			caps_endowed_accounts: vec![(ALICE, 1_000_000), (BOB, 100_000), (CHARLIE, 100_000)],
 		}
 	}
 }
@@ -121,9 +114,11 @@ impl ExtBuilder {
 		.assimilate_storage(&mut t)
 		.unwrap();
 
-        pallet_mint_with_fee::GenesisConfig::<Test> {
-            fee_percent: (10 as u32).into(),
-        };
+		pallet_mint_with_fee::GenesisConfig::<Test> {
+			fee_percent: (10u32).into(),
+		}
+		.assimilate_storage(&mut t)
+		.unwrap();
 
 		let mut ext = sp_io::TestExternalities::new(t);
 		ext.execute_with(|| System::set_block_number(1));
