@@ -3,9 +3,8 @@
 
 use super::*;
 use frame_benchmarking::{account as benchmark_account, benchmarks};
-use frame_support::{assert_ok, sp_runtime::traits::Saturating};
+use frame_support::{assert_ok, sp_runtime::traits::Saturating, BoundedVec};
 use frame_system::RawOrigin;
-use sp_std::vec;
 
 use crate::Pallet;
 
@@ -19,7 +18,7 @@ benchmarks! {
 		let bob: T::AccountId = get_account::<T>("BOB");
 		let charlie: T::AccountId = get_account::<T>("CHARLIE");
 		let i = T::Currency::minimum_balance().saturating_mul(1000u32.into());
-		let metadata = vec![0; 100];
+		let metadata: BoundedVec<_, _> = vec![0; 99].try_into().unwrap();
 		assert_ok!(Pallet::<T>::change_fee_percent(RawOrigin::Root.into(), 10u32.into()));
 	}: _(RawOrigin::Root, bob.clone(), Some(charlie.clone()), i, metadata)
 	verify {

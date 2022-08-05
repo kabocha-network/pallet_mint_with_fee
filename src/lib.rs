@@ -61,6 +61,7 @@ pub mod pallet {
 		type Event: From<Event<Self>> + IsType<<Self as frame_system::Config>::Event>;
 		type Currency: Currency<Self::AccountId>;
 		type WeightInfo: WeightInfo;
+		type MaxMetadataSize: Get<u32>;
 	}
 
 	#[pallet::pallet]
@@ -72,10 +73,10 @@ pub mod pallet {
 	pub enum Event<T: Config> {
 		/// the value have been minted on the target accout
 		/// [target_account, value, metadata]
-		ValueMinted(T::AccountId, BalanceOf<T>, Vec<u8>),
+		ValueMinted(T::AccountId, BalanceOf<T>, BoundedVec<u8, T::MaxMetadataSize>),
 		/// the fees have been minted on the nsm account
 		/// [nsp_account, value, metadata]
-		FeeMinted(T::AccountId, BalanceOf<T>, Vec<u8>),
+		FeeMinted(T::AccountId, BalanceOf<T>, BoundedVec<u8, T::MaxMetadataSize>),
 		/// the percentage have been changed
 		/// [new_percentage]
 		FeeChanged(BalanceOf<T>),
@@ -146,7 +147,7 @@ pub mod pallet {
 			target_account: T::AccountId,
 			fee_target_account: Option<T::AccountId>,
 			#[pallet::compact] amount: BalanceOf<T>,
-			metadata: Vec<u8>,
+			metadata: BoundedVec<u8, T::MaxMetadataSize>,
 		) -> DispatchResult {
 			ensure_root(origin)?;
 
