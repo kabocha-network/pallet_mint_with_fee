@@ -74,11 +74,17 @@ impl pallet_balances::Config for Test {
 	type WeightInfo = ();
 }
 
+parameter_types! {
+	pub const MaxMetadataSize: u32 = 100;
+}
+
 impl pallet_mint_with_fee::Config for Test {
 	type Currency = Balances;
 	type Event = Event;
 	type WeightInfo = pallet_mint_with_fee::weights::SubstrateWeight<Test>;
+	type MaxMetadataSize = MaxMetadataSize;
 }
+
 
 /// Mock users AccountId
 pub const ALICE: u64 = 1;
