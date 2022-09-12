@@ -73,10 +73,18 @@ pub mod pallet {
 	pub enum Event<T: Config> {
 		/// the value have been minted on the target accout
 		/// [target_account, value, metadata]
-		ValueMinted(T::AccountId, BalanceOf<T>, BoundedVec<u8, T::MaxMetadataSize>),
+		ValueMinted(
+			T::AccountId,
+			BalanceOf<T>,
+			BoundedVec<u8, T::MaxMetadataSize>,
+		),
 		/// the fees have been minted on the nsm account
 		/// [nsp_account, value, metadata]
-		FeeMinted(T::AccountId, BalanceOf<T>, BoundedVec<u8, T::MaxMetadataSize>),
+		FeeMinted(
+			T::AccountId,
+			BalanceOf<T>,
+			BoundedVec<u8, T::MaxMetadataSize>,
+		),
 		/// the percentage have been changed
 		/// [new_percentage]
 		FeeChanged(BalanceOf<T>),
