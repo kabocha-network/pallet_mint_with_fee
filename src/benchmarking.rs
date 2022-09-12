@@ -5,6 +5,7 @@ use super::*;
 use frame_benchmarking::{account as benchmark_account, benchmarks};
 use frame_support::{assert_ok, sp_runtime::traits::Saturating, BoundedVec};
 use frame_system::RawOrigin;
+use sp_std::vec;
 
 use crate::Pallet;
 
