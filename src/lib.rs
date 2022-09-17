@@ -159,10 +159,6 @@ pub mod pallet {
 		) -> DispatchResult {
 			ensure_root(origin)?;
 
-			if metadata.len() > 100 {
-				return Err(Error::<T>::TooLongMetadata.into())
-			}
-
 			if let Some(fee_target_account) = fee_target_account {
 				let fee_amount = (amount / 100u32.into())
 					.checked_mul(&Self::fee_percent())
