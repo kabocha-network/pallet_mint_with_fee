@@ -25,6 +25,7 @@
 //!   fee.
 
 #![cfg_attr(not(feature = "std"), no_std)]
+pub use pallet::*;
 
 #[cfg(test)]
 mod mock;
@@ -41,7 +42,7 @@ pub use frame_support::{
 	traits::Currency,
 };
 pub use frame_system::ensure_root;
-pub use pallet::*;
+
 pub use sp_std::prelude::Vec;
 
 #[cfg(feature = "runtime-benchmarks")]
@@ -58,12 +59,13 @@ pub mod pallet {
 
 	#[pallet::config]
 	pub trait Config: frame_system::Config {
-		type Event: From<Event<Self>> + IsType<<Self as frame_system::Config>::Event>;
+		type RuntimeEvent: From<Event<Self>> + IsType<<Self as frame_system::Config>::RuntimeEvent>;
 		type Currency: Currency<Self::AccountId>;
 		type WeightInfo: WeightInfo;
 		type MaxMetadataSize: Get<u32>;
 	}
 
+	
 	#[pallet::pallet]
 	#[pallet::generate_store(pub(super) trait Store)]
 	pub struct Pallet<T>(_);
@@ -149,6 +151,7 @@ pub mod pallet {
 		/// Related functions:
 		/// - `mint_to_account` can be one or two times, depending on if the fee account is provided
 		///   or not.
+		#[pallet::call_index(0)]
 		#[pallet::weight(T::WeightInfo::mint())]
 		pub fn mint(
 			origin: OriginFor<T>,
@@ -186,6 +189,7 @@ pub mod pallet {
 		/// affecting the next calls to `mint`
 		///
 		/// The dispatch origin for this call must be `Signed` by the root.
+		#[pallet::call_index(1)]
 		#[pallet::weight(T::WeightInfo::change_fee_percent())]
 		pub fn change_fee_percent(
 			origin: OriginFor<T>,
